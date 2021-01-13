@@ -1,0 +1,186 @@
+#LABA 4
+A = "3E3F9CADF55B2AF38E5E724670C0E7DF03E83036E6349C1BA098B1A4A65520250BD9F64B50D6226F48DD8C3424EC570D2D134631345F"
+B = "2455C7B1A866EFF01B84632D97ED39045F8D83F3555E22A0EF0416841D20D80C30BF398F40F7D9A86781432334600C0D5F593AB901FD"
+N = "6AB75F4EEA6E7DBBFC57715A941270D9820AF5B95AB1705893195EEBEB5988581E0A2670EF6E6F805D3B70FD594059403E65195DE598"
+m = 431
+a3 = [0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1]
+b3 = [0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1]
+c3 = [1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1]
+a4 = [1, 0, 1, 1, 1, 0]
+m1 = 31
+m6 = 6
+n1 = 29
+def To_Bin(S):
+    S = int(bin(int(S, 16))[2:])
+    S = [int(digit) for digit in str(S)]
+    while len(S) < m:
+        S.insert(0, 0)
+    return S 
+def To_Hex_From_Bin(G):
+    g1 = ''.join(str(e) for e in G)
+    g2 = int(g1, 2)
+    g3 = hex(g2)[2:]
+    return g3
+def From_Hex_To_NB(A):
+    A1 = To_Bin(A)
+    return A1
+print("А в нормальном базисе:")
+A1 = From_Hex_To_NB(A)
+print(A1)
+print(len(A1))
+print("B в нормальном базисе:")
+B1 = From_Hex_To_NB(B)
+print(B1)
+print(len(B1))
+def Addition(A, B):
+    C = []
+    for i in range(len(A)):
+        c = A[i] + B[i]
+        c1 = c % 2
+        C.append(c1)
+    return C
+C = Addition(A1, B1)
+print("А + В в нормальном базисе:")
+print(C)
+print("А + В в нормальном базисе в системе счисления Хекс:")
+print(To_Hex_From_Bin(C))
+def Zero_Check(listQ): 
+    q = int(str(int(''.join(str(e) for e in listQ), 2))) 
+    if  q == 0: 
+        return 1 
+    else: 
+        return 0
+
+def Matrix(m):
+    p = (2 * m) + 1
+    D1 = []
+    for i in range(m):
+        D = []
+        for j in range(m):
+            x = 2 ** i + 2 ** j
+            y = 2 ** i - 2 ** j
+            z = -2 ** i + 2 ** j
+            w = -2 ** i - 2 ** j
+            if (x % p == 1 or y % p == 1 or z % p == 1 or w % p == 1):
+                D.insert(j, 1)
+            else:
+                D.insert(j, 0)
+        D1.append(D)
+    return D1
+#print(len(Matrix(m)))
+def Mul_Elem_By_Matrix(A, m):
+    M = Matrix(m)
+    k = [0] * len(M)
+    for index in range(len(A)):
+        if A[index] == 1:
+            k = Addition(k, M[index])
+    if Zero_Check(A) == 1:
+        return A
+    return k    
+# print(Mul_Elem_By_Matrix(A1))
+# print(len(Mul_Elem_By_Matrix(A1)))
+def Mul_Elem_By_Elem(a, b):
+    t = 0
+    for i in range(len(a)):
+        if a[i] == 1:
+            t = t + b[i]
+    if (Zero_Check(a) == 1 or Zero_Check(b) == 1):
+        return 0
+    t1 = t % 2    
+    return t1        
+#print(Mul_Elem_By_Elem(A1, B1))
+def Shift_To_Left(a, k):
+    A = a[:]
+    A1 = A[0:k]
+    for i in range(k):
+        if len(A) == 0:
+            break
+        A.remove(A[0])
+    A3 = A + A1    
+    return A3
+def Shift_To_Right(a, k):
+    A = a[:]
+    A1 = A[0:(len(A) - k)]
+    A2 = A[(len(A) - k):]
+    A3 = A2 + A1    
+    return A3
+# print(len(A1))
+# print(Shift_To_Left(A1, 5))
+# print(len(Shift_To_Left(A1, 5)))
+def Multiplication_NB(A, B, m):
+    G = []
+    for i in range(len(A)):
+        A1 = Shift_To_Left(A, i)
+        B1 = Shift_To_Left(B, i)
+        g = Mul_Elem_By_Matrix(A1, m)
+        g1 = Mul_Elem_By_Elem(g, B1)
+        G.append(g1)
+    return G    
+print("a3*b3 в нормальном базисе:")
+F = Multiplication_NB(a3, b3, m1)
+print(F)
+f = To_Hex_From_Bin(F)
+print(f)
+def Tray(E):
+    Tr = sum(E) % 2 
+    return Tr
+print("След элемента А в нормальном базисе:")
+print(Tray(A1))
+def Square_NB(A):
+    A1 = A[:]
+    S = Shift_To_Right(A1, 1)
+    return S
+print("А^2 в нормальном базисе:")
+s1 = Square_NB(A1)
+print(Square_NB(A1))
+print(len(Square_NB(A1)))
+print(To_Hex_From_Bin(s1))
+def Power_NB(A, n, m):
+    A1 = A[:]
+    #j = (2 ** m) - 1
+    #if (n < j or n == j):
+    for i in range(m):
+        if (n == 2 ** i):
+            P = Shift_To_Right(A1, i)
+    return P
+print("А^N в нормальном базисе:")
+n2 = int(N, 16)
+#print(Power_NB(A1, n2, m))
+#print(To_Hex_From_Bin(Power_NB(A1, n2, m)))
+def Inv_Elem_NB(A, m): #Алгоритм Ито-Цуджии
+    m1 = m - 1
+    m2 = bin(m1)[2:]
+    m3 = [int(digit) for digit in str(m2)] # m - 1 to bin list
+    #for i in range(1, m):
+    B = A[:]
+    k = 1
+    index = (len(m3) - 1) - 1
+    while (index > 0 or index == 0):
+        B = Multiplication_NB((Power_NB(B, (2 ** k), m)), B, m)
+        k = 2 * k
+        if m3[index] == 1:
+            B = Multiplication_NB(Square_NB(B), A, m)
+            k = k + 1
+        index = index - 1
+        if k == m2:
+            break
+    B = Square_NB(B)
+    return B
+print("Обратный эоемент А^(-1) в нормальном базисе:")
+Inv = Inv_Elem_NB(a4, m6)
+print(Inv)
+print(To_Hex_From_Bin(Inv))
+print("Перевірка:")
+print("a*b+b*c ?=? (a+b)*c")
+H1 = Multiplication_NB(a3, c3, m1)
+H2 = Multiplication_NB(c3, b3, m1)
+x1 = Addition(H1, H2)
+x2 = Multiplication_NB(Addition(a3, b3), c3, m1)
+print(x1)
+print(x2)
+print("Виконується")
+print("Перевірка:")
+print("a^-1 * a ?=? 1")
+u1 = Multiplication_NB(a4, Inv, m6)
+print(u1)
+print("Виконується")
